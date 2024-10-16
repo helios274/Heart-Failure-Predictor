@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Failure Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+</head>
+
+<body>
+    <div class="container">
+
+        <a href="{{ url_for('index')}}">
+            <h2>Heart Failure Prediction</h2>
+        </a>
+
+        {% if prediction %}
+        <p class="result">There is a {{prediction}}% chance of heart failure</p>
+        <div class="button-container">
+            <a href="{{ url_for('index')}}" type="button" class="clear-btn">Clear</a>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('index')}}">
+            <div class="form-group">
+                <label for="age">Age</label>
+                <small>Enter the patient's age in years.</small>
+                <input type="number" id="age" name="age" min="0" required {% if data %} value="{{data.age}}" {% endif %}>
+            </div>
+
+            <div class="form-group">
+                <label for="anaemia">Anaemia</label>
+                <small>Indicate if the patient has a decrease in red blood cells or hemoglobin.</small>
+                <div class="radio-group">
+                    {% if data %}
+                    {% if data.anaemia == 1 %}
+                    <label><input type="radio" name="anaemia" value="1" required checked> Yes</label>
+                    <label><input type="radio" name="anaemia" value="0"> No</label>
+                    {% else %}
+                    <label><input type="radio" name="anaemia" value="1" required> Yes</label>
+                    <label><input type="radio" name="anaemia" value="0" checked> No</label>
+                    {% endif %}
+                    {% else %}
+                    <label><input type="radio" name="anaemia" value="1" required> Yes</label>
+                    <label><input type="radio" name="anaemia" value="0"> No</label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="creatinine_phosphokinase">Creatinine Phosphokinase (mcg/L)</label>
+                <small>Enter the level of the enzyme CPK in the blood, which can be elevated due to muscle damage.</small>
+                <input type="number" id="creatinine_phosphokinase" name="creatinine_phosphokinase" min="0" required {% if data %} value="{{data.creatinine_phosphokinase}}" {% endif %}>
+            </div>
+
+            <div class="form-group">
+                <label for="diabetes">Diabetes</label>
+                <small>Indicate if the patient has a history of diabetes.</small>
+                <div class="radio-group">
+                    {% if data %}
+                    {% if data.diabetes == 1 %}
+                    <label><input type="radio" name="diabetes" value="1" required checked> Yes</label>
+                    <label><input type="radio" name="diabetes" value="0"> No</label>
+                    {% else %}
+                    <label><input type="radio" name="diabetes" value="1" required> Yes</label>
+                    <label><input type="radio" name="diabetes" value="0" checked> No</label>
+                    {% endif %}
+                    {% else %}
+                    <label><input type="radio" name="diabetes" value="1" required> Yes</label>
+                    <label><input type="radio" name="diabetes" value="0"> No</label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ejection_fraction">Ejection Fraction (%)</label>
+                <small>Enter the percentage of blood leaving the heart each time it contracts (normal is 50-70%).</small>
+                <input type="number" id="ejection_fraction" name="ejection_fraction" min="0" max="100" required {% if data %} value="{{data.ejection_fraction}}" {% endif %}>
+            </div>
+
+            <div class="form-group">
+                <label for="high_blood_pressure">High Blood Pressure</label>
+                <small>Indicate if the patient has a history of high blood pressure.</small>
+                <div class="radio-group">
+                    {% if data %}
+                    {% if data.high_blood_pressure == 1 %}
+                    <label><input type="radio" name="high_blood_pressure" value="1" required checked> Yes</label>
+                    <label><input type="radio" name="high_blood_pressure" value="0"> No</label>
+                    {% else %}
+                    <label><input type="radio" name="high_blood_pressure" value="1" required> Yes</label>
+                    <label><input type="radio" name="high_blood_pressure" value="0" checked> No</label>
+                    {% endif %}
+                    {% else %}
+                    <label><input type="radio" name="high_blood_pressure" value="1" required> Yes</label>
+                    <label><input type="radio" name="high_blood_pressure" value="0"> No</label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="platelets">Platelets (kiloplatelets/mL)</label>
+                <small>Enter the platelet count in the blood, which is important for clotting.</small>
+                <input type="number" id="platelets" name="platelets" min="0" required {% if data %} value="{{data.platelets}}" {% endif %}>
+            </div>
+
+            <div class="form-group">
+                <label for="serum_creatinine">Serum Creatinine (mg/dL)</label>
+                <small>Enter the level of creatinine in the blood, indicating kidney function.</small>
+                <input type="number" id="serum_creatinine" name="serum_creatinine" min="0" step="0.01" required {% if data %} value="{{data.serum_creatinine}}" {% endif %}>
+            </div>
+
+            <div class="form-group">
+                <label for="serum_sodium">Serum Sodium (mEq/L)</label>
+                <small>Enter the sodium level in the blood, which affects fluid balance and heart function.</small>
+                <input type="number" id="serum_sodium" name="serum_sodium" min="0" required {% if data %} value="{{data.serum_sodium}}" {% endif %}>
+            </div>
+
+            <div class="form-group">
+                <label for="sex">Sex</label>
+                <small>Select the patient's sex.</small>
+                <div class="radio-group">
+                    {% if data %}
+                    {% if data.sex == 1 %}
+                    <label><input type="radio" name="sex" value="0" required checked> Male</label>
+                    <label><input type="radio" name="sex" value="1"> Female</label>
+                    {% else %}
+                    <label><input type="radio" name="sex" value="0" required> Male</label>
+                    <label><input type="radio" name="sex" value="1" checked> Female</label>
+                    {% endif %}
+                    {% else %}
+                    <label><input type="radio" name="sex" value="0" required> Male</label>
+                    <label><input type="radio" name="sex" value="1"> Female</label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="smoking">Smoking</label>
+                <small>Indicate if the patient has a history of smoking.</small>
+                <div class="radio-group">
+                    {% if data %}
+                    {% if data.smoking == 1 %}
+                    <label><input type="radio" name="smoking" value="1" required checked> Yes</label>
+                    <label><input type="radio" name="smoking" value="0"> No</label>
+                    {% else %}
+                    <label><input type="radio" name="smoking" value="1" required> Yes</label>
+                    <label><input type="radio" name="smoking" value="0" checked> No</label>
+                    {% endif %}
+                    {% else %}
+                    <label><input type="radio" name="smoking" value="1" required> Yes</label>
+                    <label><input type="radio" name="smoking" value="0"> No</label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Follow-up Period (days)</label>
+                <small>Enter the number of days since the patient was last checked.</small>
+                <input type="number" id="time" name="time" min="0" required {% if data %} value="{{data.time}}" {% endif %}>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
